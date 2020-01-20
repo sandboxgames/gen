@@ -197,27 +197,18 @@ func generateMapTypes(db *sql.DB, columns []*sql.ColumnType, depth int, jsonAnno
 func sqlTypeToGoType(mysqlType string, nullable bool, gureguTypes bool) string {
 	switch mysqlType {
 	case "tinyint", "int", "smallint", "mediumint", "int4", "int2":
-		if nullable {
-			if gureguTypes {
-				return gureguNullInt
-			}
-			return sqlNullInt
+		if nullable && gureguTypes {
+			return gureguNullInt
 		}
 		return golangInt
 	case "bigint","int8":
-		if nullable {
-			if gureguTypes {
-				return gureguNullInt
-			}
-			return sqlNullInt
+		if nullable && gureguTypes {
+			return gureguNullInt
 		}
 		return golangInt64
 	case "char", "enum", "varchar", "longtext", "mediumtext", "text", "tinytext","varchar2","json","jsonb":
-		if nullable {
-			if gureguTypes {
-				return gureguNullString
-			}
-			return sqlNullString
+		if nullable && gureguTypes {
+			return gureguNullString
 		}
 		return "string"
 	case "date", "datetime", "time", "timestamp":
@@ -226,19 +217,13 @@ func sqlTypeToGoType(mysqlType string, nullable bool, gureguTypes bool) string {
 		}
 		return golangTime
 	case "decimal", "double":
-		if nullable {
-			if gureguTypes {
-				return gureguNullFloat
-			}
-			return sqlNullFloat
+		if nullable && gureguTypes {
+			return gureguNullFloat
 		}
 		return golangFloat64
 	case "float":
-		if nullable {
-			if gureguTypes {
-				return gureguNullFloat
-			}
-			return sqlNullFloat
+		if nullable && gureguTypes {
+			return gureguNullFloat
 		}
 		return golangFloat32
 	case "binary", "blob", "longblob", "mediumblob", "varbinary":

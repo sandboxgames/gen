@@ -110,7 +110,9 @@ func main() {
 
 	// generate go files for each table
 	for _, tableName := range tables {
-		structName := dbmeta.FmtFieldName(tableName)
+		fileName := handleFileName(tableName)
+		fmt.Println(tableName + " - " + fileName + ".go")
+		structName := dbmeta.FmtFieldName(fileName)
 		structName = inflection.Singular(structName)
 		structNames = append(structNames, structName)
 
@@ -127,7 +129,7 @@ func main() {
 			fmt.Println("Error in formating source: " + err.Error())
 			return
 		}
-		ioutil.WriteFile(filepath.Join("model", inflection.Singular(tableName)+".go"), data, 0777)
+		ioutil.WriteFile(filepath.Join("model", inflection.Singular(fileName)+".go"), data, 0777)
 
 		if *rest {
 			//write api
@@ -165,6 +167,19 @@ func main() {
 		}
 		ioutil.WriteFile(filepath.Join(apiName, "router.go"), data, 0777)
 	}
+}
+
+func handleFileName(tableName string) string {
+	if strings.HasPrefix(tableName, "cms_") {
+		return strings.Replace(tableName, "cms_", "", -1)
+	}
+	if strings.HasPrefix(tableName, "api_") {
+		return strings.Replace(tableName, "api_", "", -1)
+	}
+	if strings.HasPrefix(tableName, "open_") {
+		return strings.Replace(tableName, "open_", "", -1)
+	}
+	return tableName
 }
 
 func getTemplate(t string) (*template.Template, error) {
